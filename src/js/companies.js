@@ -70,7 +70,11 @@ ACT.cpSave = () => {
   if (nm !== old) { if (!c.alias.includes(old)) c.alias.push(old); for (const r of db.records) if (r.company === old) { r.company = nm; moved++; } }
   S.cp.sel = nm; changed(nm !== old ? `업체 이름 바꿈: ${old} → ${nm} (기록 ${moved}건)` : `업체 고침: ${nm}`); toast('저장했어요'); render();
 };
-ACT.cpDel = () => { const nm = S.cp.sel; ask('업체 지우기', `<p><b>${esc(nm)}</b>을(를) 업체 목록에서 지울까요?</p>`, '지우기', () => { S.db.companies = S.db.companies.filter((c) => c.name !== nm); S.cp.sel = ''; changed(`업체 지움: ${nm}`); render(); }, true); };
+ACT.cpDel = () => {
+  const nm = S.cp.sel, pos = S.db.companies.findIndex((c) => c.name === nm), c = S.db.companies[pos]; if (!c) return;
+  S.db.companies.splice(pos, 1); S.cp.sel = ''; changed(`업체 지움: ${nm}`); render();
+  toast('업체를 지웠어요', () => { S.db.companies.splice(pos, 0, c); S.cp.sel = nm; changed(`지운 업체 되돌림: ${nm}`); render(); });
+};
 ACT.cpMerge = () => {
   const from = S.cp.sel;
   modal(`<h2>다른 업체로 합치기</h2><p><b>${esc(from)}</b>의 기록을 모두 고른 업체로 옮기고, 이 이름은 그 업체의 별칭으로 남겨요.</p>

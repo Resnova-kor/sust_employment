@@ -122,7 +122,7 @@ function optPanel(o) {
   return `<aside class="opt" aria-label="통계 옵션"><div class="fl" style="justify-content:space-between;align-items:center"><h2>통계 옵션</h2><div class="fl" style="gap:4px"><button class="btn sm" data-act="soReset" title="저장된 기본 통계 옵션으로 되돌려요">기본값으로</button><button class="btn sm" data-act="soPanel" title="옵션 접기" aria-label="옵션 접기">‹</button></div></div>
     <fieldset><legend>기준일</legend>${r('baseMode', 'grad', '기수마다 졸업일')}${r('baseMode', 'today', `오늘(현재) <span class="hint">${today()}</span>`)}${r('baseMode', 'date', '날짜 지정')}
       ${o.baseMode === 'date' ? `<input class="in" type="date" data-in="soV" data-k="base" value="${esc(o.base)}" aria-label="기준일">` : ''}
-      <label class="ro">인정 기간 + <input class="in" type="number" min="0" max="24" style="width:56px" data-in="soV" data-k="months" value="${esc(o.months)}" aria-label="인정 개월"> 개월</label></fieldset>
+      <label class="ro">인정 기간 + <input class="in" type="text" inputmode="numeric" maxlength="2" data-num style="width:56px" data-in="soV" data-k="months" value="${esc(o.months)}" aria-label="인정 개월"> 개월</label></fieldset>
     <fieldset><legend>판단 방식</legend>${r('mode', 'any', '한 번이라도 취업 기록이 있으면 취업')}${r('mode', 'latest', '기준일 현재 마지막 기록대로')}</fieldset>
     <fieldset><legend>포함할 것</legend>${c('prac', '현장실습만 한 학생도 취업')}${c('glob', '글로벌현장학습 실습')}${c('gaup', '가업승계를 취업으로')}${c('ignoreAfter', '퇴사·입대 기록 무시', '실습·취업 뒤의 준비·입대 기록')}</fieldset>
     <details class="more" ${o.unit !== 'student' || o.denom !== 'all' ? 'open' : ''}><summary>더 보기 (업체 집계 · 분모)</summary>
@@ -147,7 +147,7 @@ ACT.soSaveDef = () => { const o = so(); if (o.baseMode !== 'grad') return;
     const d = {}; for (const k of DEF_OPT_KEYS) d[k] = k === 'months' ? +o[k] || 0 : o[k];
     S.db.settings.statDefault = d; statCache = {}; changed(`기본 통계 옵션 저장: ${optShort(o)}`); render(); toast('기본값으로 저장했어요'); }); };
 INP.soC = (el) => { so()[el.dataset.k] = el.checked; soChanged(); };
-INP.soV = (el) => { so()[el.dataset.k] = el.type === 'number' ? Math.max(0, +el.value || 0) : el.value; soChanged(); };
+INP.soV = (el) => { so()[el.dataset.k] = el.hasAttribute('data-num') ? Math.min(24, Math.max(0, +el.value || 0)) : el.value; soChanged(); };
 INP.soGi = (el) => { const o = so(), g = +el.value; o.gis = el.checked ? [...new Set(o.gis.concat([g]))] : o.gis.filter((x) => x !== g); soChanged(); };
 INP.soCq = (el) => { so().cq = el.value; render(); };
 ACT.soGiAll = (el) => { const o = so(), all = [...new Set(S.db.students.map((s) => s.gi))].sort((a, b) => a - b); o.gis = el.dataset.m === 'all' ? all : soDefault().gis; soChanged(); };

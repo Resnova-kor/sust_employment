@@ -3,7 +3,7 @@ const LG_COLS = [
   { k: 'gi', label: '기수', w: 58, get: (x) => x.s.gi }, { k: 'dept', label: '학과', w: 90, get: (x) => DEPTS.indexOf(x.s.dept) },
   { k: 'cls', label: '반', w: 46, get: (x) => x.s.cls }, { k: 'no', label: '번호', w: 56, get: (x) => x.s.no }, { k: 'name', label: '이름', w: 76, get: (x) => x.s.name },
   { k: 'kind', label: '구분', w: 124, get: (x) => KINDS.indexOf(x.r.kind) }, { k: 'fin', label: '현재 최종', w: 82, get: (x) => S.db._fin[x.r.id] || '' },
-  { k: 'comp', label: '기업명(진학은 학교명)', w: 230, get: (x) => x.r.company }, { k: 'size', label: '규모', w: 66, get: (x) => (compInfo(x.r.company) || {}).size || '' },
+  { k: 'comp', label: '기업명(진학은 학교명)', w: 230, get: (x) => x.r.company }, { k: 'size', label: '규모', w: 84, get: (x) => (compInfo(x.r.company) || {}).size || '' },
   { k: 'type', label: '유형', w: 132, get: (x) => (compInfo(x.r.company) || {}).type || '' }, { k: 'ind', label: '업종', w: 116, get: (x) => (compInfo(x.r.company) || {}).industry || '' },
   { k: 'start', label: '실습시작', w: 100, get: (x) => x.r.start }, { k: 'end', label: '실습종료', w: 100, get: (x) => x.r.end }, { k: 'emp', label: '취업일', w: 100, get: (x) => x.r.emp },
   { k: 'result', label: '실습결과', w: 82, get: (x) => x.r.result }, { k: 'abroad', label: '해외', w: 140, get: (x) => x.r.abroad }, { k: 'etype', label: '고용형태', w: 82, get: (x) => x.r.empType },

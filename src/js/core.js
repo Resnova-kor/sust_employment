@@ -138,17 +138,21 @@ let toastT = null;
 function toast(m, undo) {
   const t = $('#toast'); t.innerHTML = esc(m) + (undo ? ' <button id="undoBtn">되돌리기</button>' : ''); t.classList.add('on'); t.classList.toggle('act', !!undo);
   if (undo) $('#undoBtn').onclick = () => { t.classList.remove('on', 'act'); undo(); };
-  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on', 'act'), undo ? 7000 : 2600);
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on', 'act'), 4000);   // 알림은 모두 4초
 }
 function modal(html, opts = {}) {
   closeModal();
   const bg = document.createElement('div'); bg.className = 'modal-bg'; bg.id = 'modalBg';
-  bg.innerHTML = `<div class="modal ${opts.wide ? 'wide' : ''}" role="dialog" aria-modal="true">${html}</div>`;
+  bg.innerHTML = `<div class="modal ${opts.wide ? 'wide' : ''}" role="dialog" aria-modal="true"><button class="mx" data-act="closeModal" aria-label="닫기" title="닫기 (Esc)">×</button>${html}</div>`;
   bg.addEventListener('mousedown', (e) => { if (e.target === bg && !opts.sticky) closeModal(); });
-  document.body.appendChild(bg); const f = bg.querySelector('[autofocus], input, select, button'); if (f) f.focus();
+  document.body.appendChild(bg); const f = bg.querySelector('[autofocus], input, select, button:not(.mx)'); if (f) f.focus();
   return bg;
 }
 function closeModal() { const m = $('#modalBg'); if (m) m.remove(); }
+// 창은 Esc로 닫기(한글 조합 중이면 무시)
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !e.isComposing && $('#modalBg')) { e.preventDefault(); e.stopImmediatePropagation(); closeModal(); } }, true);
+// 숫자만 받는 칸(data-num): 숫자 아닌 글자는 바로 지움 — type=number는 마우스 휠로 값이 바뀌어서 쓰지 않음
+document.addEventListener('input', (e) => { const el = e.target; if (el.matches && el.matches('input[data-num]')) { const v = el.value.replace(/\D/g, ''); if (v !== el.value) el.value = v; } }, true);
 function ask(title, body, okLabel, onOk, danger) {
   modal(`<h2>${esc(title)}</h2><div>${body}</div><div class="acts"><button class="btn" data-act="closeModal">취소</button><button class="btn ${danger ? 'danger' : 'pri'}" id="askOk">${esc(okLabel)}</button></div>`);
   $('#askOk').onclick = () => { closeModal(); onOk(); };
@@ -182,7 +186,7 @@ function sortRows(rows, cols, st) {
 function sortHead(cols, st, act) {
   return `<colgroup>${cols.map((c) => `<col style="width:${c.w}px">`).join('')}</colgroup><thead><tr>${cols.map((c) => {
     const on = st.sk === c.k, ar = on ? (st.sd === -1 ? '▼' : '▲') : '↕';
-    return `<th class="${c.wrap ? 'wrap' : ''}" aria-sort="${on ? (st.sd === -1 ? 'descending' : 'ascending') : 'none'}"><button class="sort ${on ? 'on' : ''}" data-act="${act}" data-k="${c.k}">${esc(c.label)}<span class="ar" aria-hidden="true">${ar}</span></button></th>`; }).join('')}</tr></thead>`;
+    return `<th class="${c.wrap ? 'wrap' : ''}" aria-sort="${on ? (st.sd === -1 ? 'descending' : 'ascending') : 'none'}"><button class="sort ${on ? 'on' : ''}" data-act="${act}" data-k="${c.k}">${esc(c.label)}<span class="ar${on ? '' : ' off'}" aria-hidden="true">${ar}</span></button></th>`; }).join('')}</tr></thead>`;
 }
 function toggleSort(st, k) { if (st.sk !== k) { st.sk = k; st.sd = 1; } else if (st.sd === 1) st.sd = -1; else { st.sk = ''; st.sd = 1; } }
 // 학생 순서: 기수 → 학과(산설·공정·전기·건설) → 반 → 번호

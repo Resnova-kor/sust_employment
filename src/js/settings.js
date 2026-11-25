@@ -21,7 +21,7 @@ function mgOpt() {
       <div class="grid" style="gap:8px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">${gis.map((g) => `<label class="f"><span>${g}기</span><input class="in" type="date" data-in="setGrad" data-g="${g}" value="${esc(st.grad[g] || '')}"></label>`).join('')}</div></section>
     <section class="card"><h2>산학부 공식 숫자</h2><p class="small muted">${esc(st.officialSource || '')} — 요약·통계 화면 비교용</p>
       <div class="tbox"><table class="t num"><thead><tr><th>기수</th><th>졸업</th><th>취업</th><th>공공</th><th>대기업</th><th>중소·중견</th><th>진학·입대·가업</th></tr></thead><tbody>
-      ${gis.map((g) => { const o = st.official[g] || {}; return `<tr><td>${g}기</td>${['grad', 'emp', 'pub', 'big', 'sme', 'other'].map((k) => `<td><input class="in" style="width:72px;padding:4px 6px" type="number" min="0" data-in="setOff" data-g="${g}" data-k="${k}" value="${o[k] ?? ''}" aria-label="${g}기 ${k}"></td>`).join('')}</tr>`; }).join('')}
+      ${gis.map((g) => { const o = st.official[g] || {}; return `<tr><td>${g}기</td>${['grad', 'emp', 'pub', 'big', 'sme', 'other'].map((k) => `<td><input class="in" style="width:72px;padding:4px 6px" type="text" inputmode="numeric" maxlength="4" data-num data-in="setOff" data-g="${g}" data-k="${k}" value="${o[k] ?? ''}" aria-label="${g}기 ${k}"></td>`).join('')}</tr>`; }).join('')}
       </tbody></table></div></section></div>`;
 }
 function mgChk() {
@@ -40,7 +40,7 @@ function mgLog() {
   const L = q ? db.log.filter((l) => l.msg.includes(q) || l.t.includes(q)) : db.log;
   return `<section class="card"><div class="fl" style="justify-content:space-between;align-items:flex-end"><h2>바뀐 기록 <span class="small muted" style="font-weight:400">${L.length}건</span></h2>
       <label class="f" style="flex:0 1 300px"><span>찾기</span><input class="in" id="mgQ" data-in="mgQ" type="search" value="${esc(S.mgq || '')}" placeholder="이름 · 업체 · 날짜"></label></div>
-    <div class="tbox" data-keep="logBox" style="max-height:calc(100vh - 260px);margin-top:10px"><table class="t fixed"><colgroup><col style="width:160px"><col></colgroup><thead><tr><th>시각</th><th>내용</th></tr></thead><tbody>${L.slice(0, 1000).map((l) => `<tr><td class="muted small">${esc(l.t.slice(0, 16).replace('T', ' '))}</td><td class="wrap" style="text-align:left">${esc(l.msg)}</td></tr>`).join('') || '<tr><td colspan="2" class="empty">없어요</td></tr>'}</tbody></table></div></section>`;
+    <div class="tbox" data-keep="logBox" style="max-height:calc(100vh - 260px);margin-top:10px"><table class="t fixed"><colgroup><col style="width:160px"><col></colgroup><thead><tr><th>시각</th><th class="wrap">내용</th></tr></thead><tbody>${L.slice(0, 1000).map((l) => `<tr><td class="muted small">${esc(l.t.slice(0, 16).replace('T', ' '))}</td><td class="wrap" style="text-align:left">${esc(l.msg)}</td></tr>`).join('') || '<tr><td colspan="2" class="empty">없어요</td></tr>'}</tbody></table></div></section>`;
 }
 function mgFile() {
   const conn = S.handle ? (S.perm ? `<span class="ok">연결됨</span> · ${esc(S.fileName)}` : `<span class="warn">연결 끊김</span> · ${esc(S.fileName)}`) : '<span class="warn">연결 안 됨</span> (브라우저에만 저장 중)';

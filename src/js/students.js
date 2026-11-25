@@ -197,10 +197,10 @@ function saveRecord(f, after) {
 ACT.saveRec = () => saveRecord(S.st.form, () => { S.st.form = null; render(); });
 function delRecord(id, after) {
   const db = S.db, r = db.records.find((x) => x.id === id), s = stu(r.sid);
-  ask('기록 지우기', `<p>${esc(stuLabel(s))}의 <b>${esc(r.kind)} ${esc(r.company)}</b> 기록을 지울까요?<br><span class="small muted">하루 1번 보관본이 남아 있어서 관리 › 데이터 파일·백업에서 되돌릴 수 있어요.</span></p>`, '지우기', () => {
+  {
     const pos = db.records.findIndex((x) => x.id === id); db.records.splice(pos, 1); changed(`기록 지움: ${stuLabel(s)} · ${r.kind} ${r.company}`); after && after();
     toast('기록을 지웠어요', () => { S.db.records.splice(pos, 0, r); changed(`지운 기록 되돌림: ${stuLabel(s)} · ${r.kind} ${r.company}`); render(); });
-  }, true);
+  }
 }
 ACT.delRec = () => delRecord(S.st.form.id, () => { S.st.form = null; render(); });
 
@@ -208,15 +208,18 @@ ACT.delRec = () => delRecord(S.st.form.id, () => { S.st.form = null; render(); }
 function stuModal(s) {
   const isNew = !s; s = s || { gi: S.st.gi, dept: DEPTS[0], cls: 1, no: 1, name: '', gender: '남', status: '재학중', hifiveNo: '', alias: '', memo: '', year: (S.db.students.find((x) => x.gi === S.st.gi) || { year: S.st.gi + 2017 }).year };
   modal(`<h2>${isNew ? '학생 추가' : '학생 정보 수정'}</h2>
-    <div class="fl"><label class="f"><span>기수</span><input class="in" id="sGi" type="number" min="1" value="${s.gi}"></label><label class="f"><span>학과</span><select class="in" id="sDept">${opts(DEPTS, s.dept)}</select></label>
-      <label class="f"><span>반</span><input class="in" id="sCls" type="number" min="1" value="${s.cls}"></label><label class="f"><span>번호</span><input class="in" id="sNo" type="number" min="1" value="${s.no}"></label></div>
+    <div class="fl"><label class="f"><span>기수</span><input class="in" id="sGi" type="text" inputmode="numeric" maxlength="3" data-num value="${s.gi}"></label><label class="f"><span>학과</span><select class="in" id="sDept">${opts(DEPTS, s.dept)}</select></label>
+      <label class="f"><span>반</span><input class="in" id="sCls" type="text" inputmode="numeric" maxlength="3" data-num value="${s.cls}"></label><label class="f"><span>번호</span><input class="in" id="sNo" type="text" inputmode="numeric" maxlength="3" data-num value="${s.no}"></label></div>
     <div class="fl"><label class="f"><span>이름</span><input class="in" id="sName" value="${esc(s.name)}" autofocus></label><label class="f"><span>성별</span><select class="in" id="sGen">${opts(['남', '여'], s.gender, '-')}</select></label>
       <label class="f"><span>학적상태</span><select class="in" id="sStat">${opts(STATUS, s.status)}</select></label></div>
     <div class="fl"><label class="f"><span>회원가입 식별번호</span><input class="in" id="sHi" value="${esc(s.hifiveNo)}"></label><label class="f"><span>다른이름</span><input class="in" id="sAl" value="${esc(s.alias)}"></label></div>
     <label class="f"><span>메모</span><input class="in" id="sMemo" value="${esc(s.memo)}"></label>
     <p class="small muted">학적상태가 자퇴·전학·전과(반이동)이면 졸업 대상에서 빠져요.</p>
     <div class="acts">${!isNew && !(S.db._bySid[s.id] || []).length ? '<button class="btn danger" id="sDel" style="margin-right:auto">학생 지우기</button>' : ''}<button class="btn" data-act="closeModal">취소</button><button class="btn pri" id="sOk">저장</button></div>`);
-  if ($('#sDel')) $('#sDel').onclick = () => { S.db.students = S.db.students.filter((x) => x.id !== s.id); S.st.sel = ''; closeModal(); changed(`학생 지움: ${stuLabel(s)}`); render(); };
+  if ($('#sDel')) $('#sDel').onclick = () => {
+    const pos = S.db.students.indexOf(s); S.db.students.splice(pos, 1); S.st.sel = ''; closeModal(); changed(`학생 지움: ${stuLabel(s)}`); render();
+    toast('학생을 지웠어요', () => { S.db.students.splice(pos, 0, s); S.st.gi = s.gi; S.st.sel = s.id; changed(`지운 학생 되돌림: ${stuLabel(s)}`); render(); });
+  };
   $('#sOk').onclick = () => {
     const v = { gi: +$('#sGi').value, dept: $('#sDept').value, cls: +$('#sCls').value, no: +$('#sNo').value, name: $('#sName').value.trim(), gender: $('#sGen').value, status: $('#sStat').value, hifiveNo: $('#sHi').value.trim(), alias: $('#sAl').value.trim(), memo: $('#sMemo').value.trim() };
     if (!v.name || !v.gi || !v.cls || !v.no) { toast('기수·반·번호·이름을 넣어 주세요'); return; }

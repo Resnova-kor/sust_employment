@@ -124,7 +124,7 @@ details.more summary{cursor:pointer}
 
 /* 창 */
 .modal-bg{position:fixed;inset:0;background:rgba(15,15,42,.45);display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px;z-index:50;overflow:auto}
-.modal{background:#fff;border-radius:8px;box-shadow:var(--shadow);width:min(560px,100%);padding:20px 24px;display:flex;flex-direction:column;gap:12px}
+.modal{position:relative;background:#fff;border-radius:8px;box-shadow:var(--shadow);width:min(560px,100%);padding:20px 24px;display:flex;flex-direction:column;gap:12px}
 .modal.wide{width:min(760px,100%)}
 .modal .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 18px;border-radius:6px;z-index:60;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none}
@@ -446,3 +446,11 @@ details.more>summary{cursor:pointer;font-size:13px;color:var(--muted);font-weigh
 .defbox{border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
 .defbox p{margin:6px 0 0}
 
+
+/* ===== v4.5 ===== */
+.modal .mx{position:absolute;top:12px;right:12px;width:36px;height:36px;border:0;border-radius:4px;background:none;color:var(--muted,#6b6880);font-size:22px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.modal .mx:hover{background:#ecebf5;color:inherit}
+.modal .mx:focus-visible{outline:2px solid var(--focus)}
+.modal > h2:first-of-type{padding-right:40px}
+button.sort .ar.off{visibility:hidden}
+button.sort:hover .ar.off,button.sort:focus-visible .ar.off{visibility:visible}
