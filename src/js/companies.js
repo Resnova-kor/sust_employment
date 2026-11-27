@@ -19,11 +19,11 @@ VIEWS.companies = () => {
   const CP_COLS = C.sel ? ALL.filter((c) => !['grp', 'alias', 'type'].includes(c.k)) : ALL;
   list = sortRows(list, CP_COLS, C);
   const sel = C.sel && db._cm.get(C.sel);
-  return `<div style="display:flex;gap:20px;align-items:flex-start">
+  return `<div style="display:flex;gap:var(--sp-5);align-items:flex-start">
     <div style="flex:1;min-width:0">
       <div class="head"><div><h1>업체</h1><p class="muted">표준명은 법인격 포함 · 바뀐 사명은 지금 이름으로</p></div>
         <div class="fl"><span class="small muted">${list.length}곳</span><button class="btn pri" data-act="cpNew">+ 업체</button></div></div>
-      <div class="fl" style="margin-bottom:12px">
+      <div class="fl" style="margin-bottom:var(--sp-4)">
         <label class="f" style="flex:2 1 220px"><span>찾기</span><input class="in" id="cpQ" data-in="cpQ" type="search" value="${esc(C.q)}" placeholder="이름 · 별칭 · 사업자번호"></label>
         ${msel('cp', 'size', '규모', SIZES.map((x) => [x, x]))}
         ${msel('cp', 'type', '유형', TYPES.map((x) => [x, x]))}
@@ -35,7 +35,7 @@ VIEWS.companies = () => {
       ${list.map((c) => `<tr class="click ${C.sel === c.name ? 'sel' : ''}" data-act="cpPick" data-n="${esc(c.name)}">${CP_COLS.map((col) => col.td(c)).join('')}</tr>`).join('') || `<tr><td colspan="${CP_COLS.length}" class="empty">없어요</td></tr>`}
       </tbody></table></div>
     </div>
-    ${sel ? `<aside class="card raised" style="width:360px;flex:0 0 360px;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;display:flex;flex-direction:column;gap:10px">${compDetail(sel)}</aside>` : ''}
+    ${sel ? `<aside class="card raised" style="width:360px;flex:0 0 360px;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;display:flex;flex-direction:column;gap:var(--sp-3)">${compDetail(sel)}</aside>` : ''}
   </div>`;
 };
 function compDetail(c) {
@@ -50,7 +50,7 @@ function compDetail(c) {
     <label class="f"><span>메모</span><input class="in" id="cMemo" value="${esc(c.memo)}"></label>
     <div class="fl"><button class="btn pri" style="flex:1" data-act="cpSave">저장</button><button class="btn" data-act="cpMerge">다른 업체로 합치기</button></div>
     ${recs.length ? '' : '<button class="btn danger sm" style="align-self:flex-start" data-act="cpDel">이 업체 지우기</button>'}
-    <h3 style="margin-top:8px">이 업체 기록 ${recs.length}건</h3>
+    <h3 style="margin-top:var(--sp-3)">이 업체 기록 ${recs.length}건</h3>
     ${Object.keys(byGi).sort((a, b) => a - b).map((g) => `<div><div class="small muted" style="font-weight:700">${g}기</div>${byGi[g].map(([s, r]) => `<div class="small"><a href="#" data-act="cpToStu" data-id="${esc(s.id)}">${esc(s.name)}</a> <span class="muted">${esc(grpOf(s))} · ${esc(r.kind)}${db._fin[r.id] === '이전' ? '(이전)' : ''}</span></div>`).join('')}</div>`).join('')}`;
 }
 INP.cpQ = (el) => { S.cp.q = el.value; render(); };

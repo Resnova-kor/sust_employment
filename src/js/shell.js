@@ -48,7 +48,7 @@ function renderFoot() {
 }
 function welcome() {
   return `<div class="welcome">
-    <img class="wlogo" src="${LOGO_L}" alt="서울도시과학기술고등학교"><h1 style="text-align:center;font-size:26px">현장실습·취업 통계 <span class="small muted" style="font-weight:400">${APP_VERSION}</span></h1>
+    <img class="wlogo" src="${LOGO_L}" alt="서울도시과학기술고등학교"><h1 style="text-align:center;font-size:var(--fs-2xl)">현장실습·취업 통계 <span class="small muted" style="font-weight:400">${APP_VERSION}</span></h1>
     <div class="card raised"><h2>데이터 파일 열기</h2>
       <p>'취업통계_데이터.json' 파일을 열면 시작해요. 연결한 파일에는 고칠 때마다 자동으로 저장돼요.</p>
       <button class="btn pri" data-act="openFile">데이터 파일 열기</button>
@@ -101,17 +101,17 @@ VIEWS.summary = () => {
     <div class="card raised sh kpi"><div class="kt">실습·취업·진로 기록</div><div class="v num">${db.records.length.toLocaleString()}<small> 건</small></div></div>
     <div class="card raised sh kpi"><div class="kt">등록 업체</div><div class="v num">${db.companies.length}<small> 곳</small></div></div>
   </div>
-  <section class="card" style="margin-top:20px"><div class="fl" style="justify-content:space-between;align-items:center;gap:12px">
-      <div class="fl" style="align-items:center;gap:14px"><h2>기수별 취업률</h2><a href="#" class="small" data-act="go" data-v="stats">통계에서 자세히 ›</a></div>
-      <div class="fl" style="gap:12px;align-items:center">
+  <section class="card" style="margin-top:var(--sp-5)"><div class="fl" style="justify-content:space-between;align-items:center;gap:var(--sp-4)">
+      <div class="fl" style="align-items:center;gap:var(--sp-4)"><h2>기수별 취업률</h2><a href="#" class="small" data-act="go" data-v="stats">통계에서 자세히 ›</a></div>
+      <div class="fl" style="gap:var(--sp-4);align-items:center">
         <div class="seg2" role="tablist" aria-label="그래프 모양">${SUM_VIEWS.map(([k, l]) => `<button class="${sv === k ? 'on' : ''}" role="tab" aria-selected="${sv === k}" data-act="sumView" data-v="${k}">${l}</button>`).join('')}</div>
         <div class="seg2" role="tablist" aria-label="색으로 나누는 기준"><button class="${by === 'field' ? 'on' : ''}" role="tab" aria-selected="${by === 'field'}" data-act="sumBy" data-b="field">분야별</button><button class="${by === 'part' ? 'on' : ''}" role="tab" aria-selected="${by === 'part'}" data-act="sumBy" data-b="part">규모별</button></div></div></div>
     <div class="legend sl">${CATS.map(([k, col]) => `<span><i style="background:${col}"></i>${k} <b>${fc.all[k] || 0}</b></span>`).join('')}<span><i class="o"></i>산학부 공식</span></div>
-    ${sv === 'tbl' ? `<div class="tbox" style="margin-top:8px"><table class="t num fixed sumg"><colgroup><col style="width:64px"><col style="width:112px"><col><col style="width:70px"><col style="width:58px"><col style="width:72px"><col style="width:52px"><col style="width:72px"><col style="width:76px"></colgroup>
+    ${sv === 'tbl' ? `<div class="tbox" style="margin-top:var(--sp-3)"><table class="t num fixed sumg"><colgroup><col style="width:64px"><col style="width:112px"><col><col style="width:70px"><col style="width:58px"><col style="width:72px"><col style="width:52px"><col style="width:72px"><col style="width:76px"></colgroup>
       <thead><tr><th>기수</th><th>취업률</th><th class="bc">${scale}</th><th>채용전환</th><th>실습만</th><th class="g">진학·입대</th><th>준비</th><th>기록 없음</th><th class="g">산학부<br>공식</th></tr></thead>
       <tbody>${sm.map((r) => row(r)).join('')}${sm.length > 1 ? row(tot, 'tot') : ''}</tbody></table></div>
-    <p class="small muted" style="margin:8px 0 0">막대 길이 = 취업률(졸업 대상 대비), 색 = 최종 취업처의 ${by === 'part' ? '규모' : '분야'} · 막대에 마우스를 올리면 숫자가 보여요</p>`
-    : `<div class="schart" style="margin-top:6px">${({ A: () => sumChartA(crow, CATS), B: () => sumChartB(crow, CATS, by), C: () => sumChartC(crow.concat(crowT), CATS), D: () => sumChartD(crow.concat(crowT), CATS) })[sv]()}</div>`}
+    <p class="small muted" style="margin:var(--sp-3) 0 0">막대 길이 = 취업률(졸업 대상 대비), 색 = 최종 취업처의 ${by === 'part' ? '규모' : '분야'} · 막대에 마우스를 올리면 숫자가 보여요</p>`
+    : `<div class="schart" style="margin-top:var(--sp-2)">${({ A: () => sumChartA(crow, CATS), B: () => sumChartB(crow, CATS, by), C: () => sumChartC(crow.concat(crowT), CATS), D: () => sumChartD(crow.concat(crowT), CATS) })[sv]()}</div>`}
   </section>`;
 };
 ACT.sumBy = (el) => { S.sumBy = el.dataset.b; render(); };

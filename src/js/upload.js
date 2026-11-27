@@ -246,17 +246,17 @@ VIEWS.upload = () => {
     const ok = U.files.filter((f) => !f.err);
     body = `<div class="drop" id="upDrop"><p><b>HIFIVE에서 받은 파일을 여기에 끌어다 놓거나</b></p><button class="btn pri" data-act="upPick">파일 고르기</button>
         <p class="small muted">회원가입 식별번호 · 현장실습 학생목록 · 학생자료 — 여러 개를 한꺼번에 골라도 돼요. 3학년만 써요.</p></div>
-      ${U.files.length ? `<div class="tbox" style="margin-top:14px"><table class="t"><colgroup><col style="width:38%"><col style="width:22%"><col style="width:12%"><col style="width:14%"><col style="width:14%"></colgroup><thead><tr><th>파일</th><th>종류</th><th>학년도</th><th>줄 수</th><th></th></tr></thead><tbody>
+      ${U.files.length ? `<div class="tbox" style="margin-top:var(--sp-4)"><table class="t"><colgroup><col style="width:38%"><col style="width:22%"><col style="width:12%"><col style="width:14%"><col style="width:14%"></colgroup><thead><tr><th>파일</th><th>종류</th><th>학년도</th><th>줄 수</th><th></th></tr></thead><tbody>
         ${U.files.map((f) => `<tr><td class="wrap">${esc(f.name)}</td><td>${f.err ? `<span class="err">${esc(f.err)}</span>` : esc(TYPE_L[f.type])}</td><td>${f.year || '-'}</td><td>${f.rows ? f.rows.length : '-'}</td><td><button class="btn sm" data-act="upRemove" data-n="${esc(f.name)}">빼기</button></td></tr>`).join('')}
       </tbody></table></div>
-      <div class="fl" style="justify-content:flex-end;margin-top:14px"><button class="btn" data-act="upReset">처음부터</button><button class="btn pri" data-act="upNext" ${ok.length ? '' : 'disabled'}>다음</button></div>` : ''}`;
+      <div class="fl" style="justify-content:flex-end;margin-top:var(--sp-4)"><button class="btn" data-act="upReset">처음부터</button><button class="btn pri" data-act="upNext" ${ok.length ? '' : 'disabled'}>다음</button></div>` : ''}`;
   } else if (U.stage === 'comp') {
     const cs = Object.values(U.comps).sort((a, b) => b.n - a.n);
     body = `<div class="card raised"><h2>처음 보는 업체명 ${cs.length}개</h2><p class="small muted">업체 목록에 없는 이름이에요. 같은 업체가 있으면 고르고, 없으면 ‘새 업체로 등록’(규모·유형은 나중에 업체 화면에서)을 두세요. 고른 업체에는 이 이름이 별칭으로 남아요.</p></div>
-      <div class="tbox" style="margin-top:12px"><table class="t"><colgroup><col style="width:34%"><col style="width:14%"><col style="width:8%"><col style="width:44%"></colgroup><thead><tr><th>HIFIVE 업체명</th><th>사업자번호</th><th>줄 수</th><th>연결할 업체</th></tr></thead><tbody>
+      <div class="tbox" style="margin-top:var(--sp-4)"><table class="t"><colgroup><col style="width:34%"><col style="width:14%"><col style="width:8%"><col style="width:44%"></colgroup><thead><tr><th>HIFIVE 업체명</th><th>사업자번호</th><th>줄 수</th><th>연결할 업체</th></tr></thead><tbody>
       ${cs.map((c) => `<tr><td><b>${esc(c.raw)}</b>${c.glob ? '<div class="small muted">글로벌현장학습 — 실제 실습 업체를 골라 주세요</div>' : ''}</td><td>${esc(c.biz)}</td><td>${c.n}</td><td><select class="in" style="width:100%" data-in="upComp" data-raw="${esc(c.raw)}">${opts([['__new', '+ 새 업체로 등록']].concat(c.cands.map((x) => [x.name, `${x.name}${x.bizNo && x.bizNo === c.biz ? ' (사업자번호 같음)' : ''}`])), c.choice)}</select></td></tr>`).join('')}
       </tbody></table></div>
-      <div class="fl" style="justify-content:flex-end;margin-top:14px"><button class="btn" data-act="upGo" data-s="files">이전</button><button class="btn pri" data-act="upBuild">다음: 미리보기</button></div>`;
+      <div class="fl" style="justify-content:flex-end;margin-top:var(--sp-4)"><button class="btn" data-act="upGo" data-s="files">이전</button><button class="btn pri" data-act="upBuild">다음: 미리보기</button></div>`;
   } else if (U.stage === 'preview') {
     const C = { new: '새 기록', upd: '바뀐 기록', chk: '확인 필요', same: '같음' };
     const cnt = (c) => U.items.filter((i) => i.cat === c).length;
@@ -283,10 +283,10 @@ VIEWS.upload = () => {
     }
     body = `<div class="fl" style="justify-content:space-between;align-items:center"><div class="fl" role="tablist">${Object.entries(C).map(([k, l]) => `<button class="btn ${U.tab === k ? 'pri' : (k === 'chk' && cnt(k) ? 'warnb' : '')}" role="tab" aria-selected="${U.tab === k}" data-act="upTab" data-t="${k}">${l} ${cnt(k)}</button>`).join('')}</div>
         <span class="small">반영할 줄 <b>${U.items.filter((i) => i.on && i.apply && i.cat !== 'same').length}</b>개</span></div>
-      <p class="small muted" style="margin:10px 0 0">${NOTE[U.tab]}</p>
-      <div class="tbox" style="margin-top:8px;max-height:calc(100vh - 330px)" data-keep="upBox">${table}
+      <p class="small muted" style="margin:var(--sp-3) 0 0">${NOTE[U.tab]}</p>
+      <div class="tbox" style="margin-top:var(--sp-3);max-height:calc(100vh - 330px)" data-keep="upBox">${table}
         ${list.length > show.length ? `<div class="empty">${list.length - show.length}줄 더 있어요(체크 상태대로 함께 반영돼요)</div>` : ''}</div>
-      <div class="fl" style="justify-content:space-between;margin-top:14px"><span class="small muted">반영하기 직전에 보관본을 남겨서 ‘데이터 파일·백업’ 탭에서 되돌릴 수 있어요.</span>
+      <div class="fl" style="justify-content:space-between;margin-top:var(--sp-4)"><span class="small muted">반영하기 직전에 보관본을 남겨서 ‘데이터 파일·백업’ 탭에서 되돌릴 수 있어요.</span>
         <div class="fl"><button class="btn" data-act="upReset">취소</button><button class="btn pri" style="min-width:110px" data-act="upApply">반영</button></div></div>`;
   } else if (U.stage === 'done') {
     const r = U.result;
@@ -294,7 +294,7 @@ VIEWS.upload = () => {
       <p class="small muted">되돌리려면 ‘데이터 파일·백업’ 탭의 자동 보관본에서 ‘${esc(r.key.slice(5))}’을 고르세요.</p>
       <div class="fl"><button class="btn pri" data-act="upReset">다른 파일 올리기</button>${r.nc ? '<button class="btn" data-act="goComp" data-f="nosize">새 업체 분류하기</button>' : ''}</div></div>`;
   }
-  return `<p class="muted" style="margin:0 0 12px">HIFIVE에서 내려받은 파일을 그대로 올리면, 반영하기 전에 바뀌는 내용을 먼저 보여 드려요</p>${stepBar}${body}`;
+  return `<p class="muted" style="margin:0 0 var(--sp-4)">HIFIVE에서 내려받은 파일을 그대로 올리면, 반영하기 전에 바뀌는 내용을 먼저 보여 드려요</p>${stepBar}${body}`;
 };
 // 파일 고르기 · 끌어다 놓기
 (function () {

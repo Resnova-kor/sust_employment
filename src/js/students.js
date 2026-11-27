@@ -50,14 +50,14 @@ function stuCard(s) {
   const st2 = gd && gd < today() ? `<div class="pstat"><span class="pv"><span class="k">현재</span><b>${esc(pathLabel(t) || '-')}</b>${t && t.company ? ` <span class="muted">${esc(t.company)}</span>` : ''}
       </span><span class="pv"><span class="k">졸업 기준 통계</span><b>${esc(pathLabel(tg2) || '-')}</b> <span class="small muted">(졸업일 ${esc(gd)} + ${d0.months}개월)</span></span>${why ? `<div class="small warn" style="font-weight:400">${esc(why)}</div>` : ''}</div>`
     : `<div class="pstat"><span class="pv"><span class="k">현재</span><b>${esc(pathLabel(t) || '-')}</b>${t && t.company ? ` <span class="muted">${esc(t.company)}</span>` : ''} <span class="small muted">(졸업 전 · ${esc(gd)} 졸업 예정)</span></span></div>`;
-  return `<div class="fl" style="justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+  return `<div class="fl" style="justify-content:space-between;align-items:flex-start;margin-bottom:var(--sp-3)">
       <div><div class="small muted meta1"><span>${s.gi}기 (${s.year}학년도)</span><span>${deptTag(s.dept)} ${s.cls}반 ${s.no}번</span><span>${esc(s.gender)}</span><span>식별번호 ${esc(s.hifiveNo || '-')}</span><span>${esc(s.id)}</span></div>
-      <h1 style="font-size:24px">${esc(s.name)} ${s.alias ? `<span class="small muted" style="font-weight:400">다른이름 ${esc(s.alias)}</span>` : ''}</h1>
+      <h1 style="font-size:var(--fs-2xl)">${esc(s.name)} ${s.alias ? `<span class="small muted" style="font-weight:400">다른이름 ${esc(s.alias)}</span>` : ''}</h1>
       ${s.memo ? `<div class="small muted">메모: ${esc(s.memo)}</div>` : ''}</div>
       <div class="fl" style="align-items:center"><span class="chip ${tg ? 'ok' : 'no'}">${tg ? '졸업 대상' : esc(s.status)}</span>
       <button class="btn" data-act="editStu">학생 정보 수정</button></div></div>
     ${st2}
-    <h2 style="margin-bottom:10px">기록 (시간 순) <span class="small muted" style="font-weight:400">${recs.length}건</span></h2>
+    <h2 style="margin-bottom:var(--sp-3)">기록 (시간 순) <span class="small muted" style="font-weight:400">${recs.length}건</span></h2>
     ${recs.map(recCard).join('') || '<div class="empty card">기록이 없어요</div>'}`;
 }
 function recCard(r) {
@@ -71,8 +71,8 @@ function recCard(r) {
   const tags = c ? [c.size, c.type, c.industry].filter(Boolean).map((x) => `<span class="ctag">${esc(x)}</span>`).join('') : '';
   const nm = r.company || (r.kind === '진학' ? '(학교 미기재)' : (['취업·진학 준비', '입대', '기타'].includes(r.kind) ? '' : '(업체 미기재)'));
   return `<article class="rec ${fin === '최종' ? 'final' : ''} ${fin === '이전' ? 'prevr' : ''} ${S.st.hl === r.id ? 'hl' : ''}">
-    <div class="rtop"><div class="fl" style="gap:8px;align-items:center">${kindChip(r.kind)}${fin ? `<span class="fin ${fin === '최종' ? 'f1' : 'f0'}">${fin}</span>` : ''}</div>
-      <div class="fl" style="gap:10px;align-items:center"><span class="basis ${r.basis === 'HIFIVE' ? 'h' : 'm'}">${esc(r.basis)}</span><button class="btn sm" data-act="editRec" data-id="${esc(r.id)}">수정</button></div></div>
+    <div class="rtop"><div class="fl" style="gap:var(--sp-3);align-items:center">${kindChip(r.kind)}${fin ? `<span class="fin ${fin === '최종' ? 'f1' : 'f0'}">${fin}</span>` : ''}</div>
+      <div class="fl" style="gap:var(--sp-3);align-items:center"><span class="basis ${r.basis === 'HIFIVE' ? 'h' : 'm'}">${esc(r.basis)}</span><button class="btn sm" data-act="editRec" data-id="${esc(r.id)}">수정</button></div></div>
     ${nm ? `<div class="rname"><span class="cname">${esc(nm)}</span>${tags}</div>` : ''}
     ${f.length ? `<div class="facts">${f.join('')}</div>` : ''}
     ${r.note ? `<div class="rnote">${esc(r.note)}</div>` : ''}

@@ -78,7 +78,7 @@ function compTable(run) {
     body += `<tr class="part"><td colspan="2"><b>${esc(p)}</b> <span class="small">${ns.length}곳</span></td>${sub.map((x) => `<td>${x || ''}</td>`).join('')}<td><b>${sub.reduce((a, b) => a + b, 0)}</b></td></tr>`;
     body += ns.map((n) => `<tr><td class="cn" title="${esc(n)}">${esc(n)}</td><td class="small muted">${esc((compInfo(n) || {}).size || '')}</td>${gis.map((g) => { const c = by[n].filter((r) => r.gi === g).length; return `<td>${c ? cellBtn(c, { comp: n, gi: g }) : ''}</td>`; }).join('')}<td><b>${cellBtn(by[n].length, { comp: n })}</b></td></tr>`).join('');
   }
-  return `<div class="fl" style="margin-bottom:10px"><label class="f" style="flex:0 1 320px"><span>업체 찾기</span><input class="in" id="soCq" data-in="soCq" type="search" value="${esc(o.cq || '')}" placeholder="이름 · 별칭"></label>
+  return `<div class="fl" style="margin-bottom:var(--sp-3)"><label class="f" style="flex:0 1 320px"><span>업체 찾기</span><input class="in" id="soCq" data-in="soCq" type="search" value="${esc(o.cq || '')}" placeholder="이름 · 별칭"></label>
       <span class="small muted" style="align-self:center">${o.unit === 'record' ? '취업 기록마다(이직 전 포함)' : '학생 1명 = 1건(최종 취업처)'} · 부문 안에서 인원 많은 순</span></div>
     <div class="tbox" data-keep="soComp" style="max-height:calc(100vh - 300px)"><table class="t num fixed comt" style="min-width:${w.reduce((a, b) => a + b, 0)}px"><colgroup>${w.map((x) => `<col style="width:${x}px">`).join('')}</colgroup>
     <thead><tr><th>업체</th><th>규모</th>${gis.map((g) => `<th>${g}기</th>`).join('')}<th>합계</th></tr></thead><tbody>${body || `<tr><td colspan="${gis.length + 3}" class="empty">없어요</td></tr>`}</tbody></table></div>`;
@@ -105,10 +105,10 @@ function drillList(run) {
   const tmap = new Map(T.map((t) => [t.sid, t]));
   rows = rows.slice().sort((a, b) => stuCmp(stu(a.sid), stu(b.sid)));
   return `<section class="card raised drill" id="drill"><div class="fl" style="justify-content:space-between"><h2>${esc(title)} <span class="small muted" style="font-weight:400">${rows.length}명</span></h2><button class="btn sm" data-act="drillClose">닫기</button></div>
-    <div class="tbox" style="margin-top:8px;max-height:360px"><table class="t fixed"><colgroup><col style="width:70px"><col style="width:90px"><col style="width:60px"><col style="width:110px"><col style="width:130px"><col></colgroup>
+    <div class="tbox" style="margin-top:var(--sp-3);max-height:360px"><table class="t fixed"><colgroup><col style="width:70px"><col style="width:90px"><col style="width:60px"><col style="width:110px"><col style="width:130px"><col></colgroup>
     <thead><tr><th>기수</th><th>학과</th><th>반·번호</th><th>이름</th><th>진로</th><th>진로처</th></tr></thead><tbody>
     ${rows.map((x) => { const s = stu(x.sid), t = tmap.get(x.sid) || {}; return `<tr class="click" data-act="toStu" data-id="${esc(x.sid)}"><td>${s.gi}기</td><td>${deptTag(s.dept)}</td><td>${s.cls}-${s.no}</td><td><b>${esc(s.name)}</b></td><td>${esc(t.path === '취업' && t.detail && t.detail !== '취업' ? `취업(${t.detail})` : t.path || '')}</td><td class="cn">${esc(x.company || t.company || '')}</td></tr>`; }).join('') || '<tr><td colspan="6" class="empty">없어요</td></tr>'}
-    </tbody></table></div><p class="small muted" style="margin:6px 0 0">줄을 누르면 학생 카드로 가요</p></section>`;
+    </tbody></table></div><p class="small muted" style="margin:var(--sp-2) 0 0">줄을 누르면 학생 카드로 가요</p></section>`;
 }
 ACT.drill = (el) => { S.drill = JSON.parse(el.dataset.d); render(); setTimeout(() => { const d = $('#drill'); if (d) d.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 30); };
 ACT.drillClose = () => { S.drill = null; render(); };
@@ -119,7 +119,7 @@ function optPanel(o) {
   const gis = [...new Set(S.db.students.map((s) => s.gi))].sort((a, b) => a - b);
   const r = (k, v, l) => `<label class="ro"><input type="radio" name="so_${k}" data-in="soR" data-k="${k}" value="${v}" ${String(o[k]) === String(v) ? 'checked' : ''}><span>${l}</span></label>`;
   const c = (k, l, hint) => `<label class="ro"><input type="checkbox" data-in="soC" data-k="${k}" ${o[k] ? 'checked' : ''}><span>${l}${hint ? `<span class="hint">${hint}</span>` : ''}</span></label>`;
-  return `<aside class="opt" aria-label="통계 옵션"><div class="fl" style="justify-content:space-between;align-items:center"><h2>통계 옵션</h2><div class="fl" style="gap:4px"><button class="btn sm" data-act="soReset" title="저장된 기본 통계 옵션으로 되돌려요">기본값으로</button><button class="btn sm" data-act="soPanel" title="옵션 접기" aria-label="옵션 접기">‹</button></div></div>
+  return `<aside class="opt" aria-label="통계 옵션"><div class="fl" style="justify-content:space-between;align-items:center"><h2>통계 옵션</h2><div class="fl" style="gap:var(--sp-1)"><button class="btn sm" data-act="soReset" title="저장된 기본 통계 옵션으로 되돌려요">기본값으로</button><button class="btn sm" data-act="soPanel" title="옵션 접기" aria-label="옵션 접기">‹</button></div></div>
     <fieldset><legend>기준일</legend>${r('baseMode', 'grad', '기수마다 졸업일')}${r('baseMode', 'today', `오늘(현재) <span class="hint">${today()}</span>`)}${r('baseMode', 'date', '날짜 지정')}
       ${o.baseMode === 'date' ? `<input class="in" type="date" data-in="soV" data-k="base" value="${esc(o.base)}" aria-label="기준일">` : ''}
       <label class="ro">인정 기간 + <input class="in" type="text" inputmode="numeric" maxlength="2" data-num style="width:56px" data-in="soV" data-k="months" value="${esc(o.months)}" aria-label="인정 개월"> 개월</label></fieldset>
@@ -129,7 +129,7 @@ function optPanel(o) {
     <fieldset><legend>업체·규모 집계</legend>${r('unit', 'student', '학생 1명 = 1건(최종 취업처)')}${r('unit', 'record', '취업 기록마다(이직 전 포함)')}</fieldset>
     <fieldset><legend>취업률 분모</legend>${r('denom', 'all', '졸업 대상 전체(공식과 같음)')}${r('denom', 'excl', '대상 − 진학 − 입대')}</fieldset></details>
     <fieldset><legend>기수</legend><div class="gis">${gis.map((g) => `<label class="gchip ${o.gis.includes(g) ? 'on' : ''}"><input type="checkbox" data-in="soGi" value="${g}" ${o.gis.includes(g) ? 'checked' : ''}>${g}기</label>`).join('')}</div>
-      <div class="fl" style="gap:6px;margin-top:6px"><button class="btn sm" data-act="soGiAll" data-m="done">졸업 기수</button><button class="btn sm" data-act="soGiAll" data-m="all">전체</button></div></fieldset>
+      <div class="fl" style="gap:var(--sp-2);margin-top:var(--sp-2)"><button class="btn sm" data-act="soGiAll" data-m="done">졸업 기수</button><button class="btn sm" data-act="soGiAll" data-m="all">전체</button></div></fieldset>
     <fieldset><legend>학과</legend><select class="in" data-in="soV" data-k="dept" style="width:100%">${opts(DEPTS, o.dept, '전체 학과')}</select></fieldset>
     <div class="defbox"><button class="btn sm pri" data-act="soSaveDef" ${o.baseMode !== 'grad' ? 'disabled title="기준일이 졸업일일 때만 기본값으로 저장할 수 있어요"' : ''} ${soIsDef(o) ? 'disabled' : ''}>이 옵션을 기본값으로 저장</button>
       <p class="small muted">기본값은 요약 · 학생 화면 · 인쇄에 쓰여요(데이터 파일에 저장).${o.baseMode !== 'grad' ? ' 기준일이 졸업일일 때만 저장돼요.' : ''}</p></div>
@@ -169,17 +169,17 @@ VIEWS.stats = () => {
   let body = '';
   if (o.tab === 'gi') {
     body = `<div class="tbox">${groupTable(gis, '기수', (x) => x.gi, run, true)}</div>
-      <div class="row" style="margin-top:16px"><section class="card" style="flex:2 1 480px;min-width:0"><div class="fl" style="justify-content:space-between"><h3>기수별 취업률</h3><div class="legend"><span><i></i>원장(이 옵션)</span>${o.dept ? '' : '<span><i class="o"></i>산학부 공식</span>'}</div></div><div style="margin-top:10px">${rateBars(run)}</div></section>
-        <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:16px">${distBars(run, 'part', ['공공', '대기업', '중견·중소', '해외·기타'], '취업처 규모')}</div></div>
-      <div class="grid g2" style="margin-top:16px">${distBars(run, 'type', TYPES, '유형')}${distBars(run, 'industry', INDS, '업종')}</div>`;
+      <div class="row" style="margin-top:var(--sp-5)"><section class="card" style="flex:2 1 480px;min-width:0"><div class="fl" style="justify-content:space-between"><h3>기수별 취업률</h3><div class="legend"><span><i></i>원장(이 옵션)</span>${o.dept ? '' : '<span><i class="o"></i>산학부 공식</span>'}</div></div><div style="margin-top:var(--sp-3)">${rateBars(run)}</div></section>
+        <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:var(--sp-5)">${distBars(run, 'part', ['공공', '대기업', '중견·중소', '해외·기타'], '취업처 규모')}</div></div>
+      <div class="grid g2" style="margin-top:var(--sp-5)">${distBars(run, 'type', TYPES, '유형')}${distBars(run, 'industry', INDS, '업종')}</div>`;
   } else if (o.tab === 'dept') {
     body = `<div class="tbox">${groupTable(o.dept ? [o.dept] : DEPTS, '학과', (x) => x.dept, run, false)}</div>
-      <h3 style="margin:18px 0 8px">기수 × 학과 취업률 <span class="small muted" style="font-weight:400">취업률 · 취업/대상</span></h3><div class="tbox">${deptMatrix(run)}</div>`;
+      <h3 style="margin:var(--sp-5) 0 var(--sp-3)">기수 × 학과 취업률 <span class="small muted" style="font-weight:400">취업률 · 취업/대상</span></h3><div class="tbox">${deptMatrix(run)}</div>`;
   } else body = compTable(run);
   return `<div class="statw">${S.soHide ? '' : optPanel(o)}<main class="sm">
-    <div class="head" style="margin-bottom:12px"><div><h1>통계</h1><p class="muted small" title="${esc(optText(o))}">${dflt ? '<span class="chip ok">기본값</span> ' : '<span class="chip">바꾼 옵션</span> '}${esc(optShort(o))}</p></div>${S.soHide ? '<button class="btn" data-act="soPanel">옵션 펼치기</button>' : ''}</div>
-    <div class="fl" role="tablist" style="margin-bottom:14px">${TABS.map(([k, l]) => `<button class="btn ${o.tab === k ? 'pri' : ''}" role="tab" aria-selected="${o.tab === k}" data-act="soTab" data-t="${k}">${l}</button>`).join('')}
-      <span class="small muted" style="align-self:center;margin-left:8px">${gis.length > 1 ? `${gis[0]}~${gis[gis.length - 1]}기` : gis[0] + '기'} · 숫자를 누르면 학생 명단</span><button class="btn" style="margin-left:auto" data-act="soExcel">엑셀로 저장</button></div>
+    <div class="head" style="margin-bottom:var(--sp-4)"><div><h1>통계</h1><p class="muted small" title="${esc(optText(o))}">${dflt ? '<span class="chip ok">기본값</span> ' : '<span class="chip">바꾼 옵션</span> '}${esc(optShort(o))}</p></div>${S.soHide ? '<button class="btn" data-act="soPanel">옵션 펼치기</button>' : ''}</div>
+    <div class="fl" role="tablist" style="margin-bottom:var(--sp-4)">${TABS.map(([k, l]) => `<button class="btn ${o.tab === k ? 'pri' : ''}" role="tab" aria-selected="${o.tab === k}" data-act="soTab" data-t="${k}">${l}</button>`).join('')}
+      <span class="small muted" style="align-self:center;margin-left:var(--sp-3)">${gis.length > 1 ? `${gis[0]}~${gis[gis.length - 1]}기` : gis[0] + '기'} · 숫자를 누르면 학생 명단</span><button class="btn" style="margin-left:auto" data-act="soExcel">엑셀로 저장</button></div>
     ${body}${drillList(run)}</main></div>`;
 };
 

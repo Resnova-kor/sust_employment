@@ -36,10 +36,10 @@ VIEWS.ledger = () => {
   rows = sortRows(rows, LG_COLS, L);
   const MAX = 600, shown = rows.slice(0, MAX);
   const filtered = !!(L.q || L.gi.length || L.dept.length || L.kind.length || L.basis.length || L.special || L.sk);
-  return `<div class="head"><div class="fl" style="align-items:baseline;gap:14px"><h1>전체 기록</h1>
+  return `<div class="head"><div class="fl" style="align-items:baseline;gap:var(--sp-4)"><h1>전체 기록</h1>
         <span class="cnt"><b>${rows.length.toLocaleString()}</b>건 조회${rows.length !== db.records.length ? ` <span class="muted">/ 전체 ${db.records.length.toLocaleString()}건</span>` : ''}</span></div>
       <p class="muted" style="width:100%;margin:0">찾아보기용 표 · 줄을 누르면 그 학생 화면으로 가서 고칠 수 있어요${rows.length > MAX ? ` · 앞의 ${MAX}건만 표시(거르기로 좁혀 보세요)` : ''}</p></div>
-    <div class="fl" style="margin-bottom:12px">
+    <div class="fl" style="margin-bottom:var(--sp-4)">
       <label class="f" style="flex:2 1 220px"><span>찾기</span><input class="in" id="lgQ" data-in="lgQ" type="search" value="${esc(L.q)}" placeholder="이름 · 업체 · 비고 · 해외"></label>
       ${msel('lg', 'gi', '기수', gis.map((g) => [g, g + '기']))}
       ${msel('lg', 'dept', '학과', DEPTS.map((d) => [d, d]))}

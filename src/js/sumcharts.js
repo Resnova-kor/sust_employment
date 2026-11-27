@@ -14,10 +14,10 @@ function sumChartA(rows, CATS) {
     const x = L + gap / 2 + i * (bw + gap); let y = T + ph;
     for (const [k, c] of CATS) { const v = r.f[k] || 0; if (!v) continue; const h = ph * v / r.n; y -= h;
       s += `<rect class="seg" x="${x}" y="${y + 1}" width="${bw}" height="${Math.max(h - 2, 1)}" fill="${c}"${tipOf(`<b>${r.lab} · ${k}</b><br>${v}명 · 취업자의 ${pct(v / r.emp)}<br><span>졸업 대상 ${r.n}명 중 ${pct(v / r.n)}</span>`)}/>`;
-      if (h > 16) s += `<text x="${x + bw / 2}" y="${y + h / 2 + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" pointer-events="none">${v}</text>`; }
-    s += `<text x="${x + bw / 2}" y="${y - 8}" text-anchor="middle" font-size="15" font-weight="700" fill="#2a2357">${pct(r.rate)}</text>`;
+      if (h > 16) s += `<text x="${x + bw / 2}" y="${y + h / 2 + 4}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff" pointer-events="none">${v}</text>`; }
+    s += `<text x="${x + bw / 2}" y="${y - 8}" text-anchor="middle" font-size="16" font-weight="700" fill="#2a2357">${pct(r.rate)}</text>`;
     if (r.off) { const oy = T + ph * (1 - r.off.emp / r.off.grad); s += `<line x1="${x - 6}" x2="${x + bw + 6}" y1="${oy}" y2="${oy}" stroke="#00a64e" stroke-width="3"${offTip(r.lab, r.off)}/>`; }
-    s += `<text x="${x + bw / 2}" y="${H - B + 20}" text-anchor="middle" font-size="14" font-weight="700" fill="#0f0f2a">${r.lab}</text><text x="${x + bw / 2}" y="${H - B + 36}" text-anchor="middle" font-size="11" fill="#524a71">${r.emp}/${r.n}명</text>`;
+    s += `<text x="${x + bw / 2}" y="${H - B + 20}" text-anchor="middle" font-size="14" font-weight="700" fill="#0f0f2a">${r.lab}</text><text x="${x + bw / 2}" y="${H - B + 36}" text-anchor="middle" font-size="12" fill="#524a71">${r.emp}/${r.n}명</text>`;
   });
   return s + '</svg>';
 }
@@ -26,7 +26,7 @@ function sumChartB(rows, CATS, by) {
   const W = 1100, H = 260, L = 44, B = 34, T = 22, ph = H - B - T, n = rows.length;
   const lo = Math.max(0, Math.floor(Math.min(...rows.map((r) => r.rate * 100), ...rows.filter((r) => r.off).map((r) => 100 * r.off.emp / r.off.grad)) / 10) * 10 - 10), hi = 100;
   const xs = (i) => (n > 1 ? L + 40 + i * ((W - L - 80) / (n - 1)) : W / 2), ys = (v) => T + ph * (1 - (v - lo) / (hi - lo));
-  let s = `<div class="legend" style="margin:4px 0 0"><span><i style="height:3px;vertical-align:3px;width:16px"></i>원장 취업률</span><span><i class="o" style="border-top-style:dashed"></i>산학부 공식</span></div><svg class="sch" viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="기수별 취업률 꺾은선">`;
+  let s = `<div class="legend" style="margin:var(--sp-1) 0 0"><span><i style="height:3px;vertical-align:3px;width:16px"></i>원장 취업률</span><span><i class="o" style="border-top-style:dashed"></i>산학부 공식</span></div><svg class="sch" viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="기수별 취업률 꺾은선">`;
   for (let v = lo; v <= hi; v += 10) s += `<line x1="${L}" x2="${W - 10}" y1="${ys(v)}" y2="${ys(v)}" stroke="#e7e5ee"/><text x="${L - 8}" y="${ys(v) + 4}" text-anchor="end" font-size="12" fill="#524a71">${v}%</text>`;
   const oP = rows.map((r, i) => (r.off ? `${xs(i)},${ys(100 * r.off.emp / r.off.grad)}` : null)).filter(Boolean).join(' ');
   if (oP) s += `<polyline points="${oP}" fill="none" stroke="#00a64e" stroke-width="2" stroke-dasharray="6 5"/>`;
@@ -35,7 +35,7 @@ function sumChartB(rows, CATS, by) {
     if (r.off) s += `<circle cx="${xs(i)}" cy="${ys(100 * r.off.emp / r.off.grad)}" r="4.5" fill="#fff" stroke="#00a64e" stroke-width="2"${offTip(r.lab, r.off)}/>`;
     s += `<circle cx="${xs(i)}" cy="${y}" r="6" fill="#2a2357" stroke="#fff" stroke-width="2"${tipOf(`<b>${r.lab} 원장</b><br>${pct(r.rate)} (${r.emp}/${r.n}명)<br><span>채용전환 ${r.conv} · 실습만 ${r.pracOnly}</span>`)}/><text x="${xs(i)}" y="${y - 12}" text-anchor="middle" font-size="14" font-weight="700" fill="#2a2357">${pct(r.rate)}</text><text x="${xs(i)}" y="${H - 10}" text-anchor="middle" font-size="14" font-weight="700" fill="#0f0f2a">${r.lab}</text>`; });
   s += '</svg>';
-  s += `<p class="small" style="font-weight:700;color:var(--muted);margin:14px 0 6px">취업자 ${by === 'part' ? '규모' : '분야'} 비율(취업자 = 100%)</p><div class="sbars">`;
+  s += `<p class="small" style="font-weight:700;color:var(--muted);margin:var(--sp-4) 0 var(--sp-2)">취업자 ${by === 'part' ? '규모' : '분야'} 비율(취업자 = 100%)</p><div class="sbars">`;
   rows.forEach((r) => { s += `<div class="sbr"><b>${r.lab}</b><div class="trk2">${CATS.filter(([k]) => r.f[k]).map(([k, c]) => { const w = 100 * r.f[k] / r.emp; return `<i class="seg" style="width:${w}%;background:${c}"${tipOf(`<b>${r.lab} · ${k}</b><br>${r.f[k]}명 · 취업자의 ${pct(r.f[k] / r.emp)}`)}>${w >= 7 ? Math.round(w) + '%' : ''}</i>`; }).join('')}</div></div>`; });
   return s + '</div>';
 }
@@ -50,7 +50,7 @@ function sumChartC(rows, CATS) {
 // D 졸업생 전체 진로 가로 막대
 function sumChartD(rows, CATS) {
   const G = [['진학·입대', '#c9c5d8', (r) => r.go + r.army], ['준비·기타', '#dcd9e6', (r) => r.prep + r.other], ['기록 없음', '#ecebf2', (r) => r.none]];
-  let s = `<div class="legend" style="margin:0 0 6px">${G.map(([k, c]) => `<span><i style="background:${c}"></i>${k}</span>`).join('')}</div><div class="drows">`;
+  let s = `<div class="legend" style="margin:0 0 var(--sp-2)">${G.map(([k, c]) => `<span><i style="background:${c}"></i>${k}</span>`).join('')}</div><div class="drows">`;
   rows.forEach((r) => { s += `<div class="drw ${r.gi === 'all' ? 'tot' : ''}"><div class="lb">${r.lab}</div><div style="position:relative"><div class="trk3">${CATS.filter(([k]) => r.f[k]).map(([k, c]) => { const w = 100 * r.f[k] / r.n; return `<i class="seg" style="width:${w}%;background:${c}"${tipOf(`<b>${r.lab} · ${k}</b><br>${r.f[k]}명 · 대상의 ${pct(r.f[k] / r.n)}`)}>${w >= 4 ? r.f[k] : ''}</i>`; }).join('')}${G.map(([k, c, fn]) => { const v = fn(r); if (!v) return ''; const w = 100 * v / r.n; return `<i class="seg g" style="width:${w}%;background:${c}"${tipOf(`<b>${r.lab} · ${k}</b><br>${v}명 · 대상의 ${pct(v / r.n)}`)}>${w >= 3 ? v : ''}</i>`; }).join('')}</div>${r.off ? `<b class="offm2" style="left:${100 * r.off.emp / r.off.grad}%"${offTip(r.lab, r.off)}></b>` : ''}</div><div class="rt">${pct(r.rate)}<small>${r.emp} / ${r.n}명</small></div></div>`; });
   return s + '</div>';
 }
