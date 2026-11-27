@@ -481,3 +481,8 @@ p{margin:var(--sp-4) 0}                       /* 브라우저 기본 문단 여�
 label.ro.allrec input{margin:0}
 .hb{height:var(--h-sm);padding-top:0;padding-bottom:0}   /* 통계 "취업처 규모" 막대 줄 */
 .hb .hn small{font-size:var(--fs-xs)}
+/* ===== v4.7 가독성 (규칙 4절) ===== */
+body{font-variant-numeric:tabular-nums;word-break:keep-all;overflow-wrap:break-word}   /* 숫자 자릿수 맞춤 · 한국어는 낱말 중간에서 안 꺾음(긴 낱말은 넘치지 않게 꺾음) */
+h1,h2,h3,h4{margin:0}
+.statw main.sm table.sumt thead th{white-space:normal}   /* 통계 표: 좁은 화면(1280)에서 열 제목이 잘리지 않게 두 줄로 */
+table.t td{vertical-align:middle}   /* 표 칸 글자는 위아래 가운데(입력 칸·버튼이 있는 줄에서도 맞게) */
