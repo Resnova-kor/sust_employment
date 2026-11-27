@@ -102,7 +102,9 @@ async function start() {
     else { S.fileName = name; loadDb(d, `데이터 파일 불러오기: ${name}`); }
   });
   try {
-    const d = await IDB.get('db'); const h = await IDB.get('handle');
+    const d0 = await withTimeout(IDB.get('db'), 3000), h0 = d0 === TIMEOUT ? TIMEOUT : await withTimeout(IDB.get('handle'), 3000);
+    if (d0 === TIMEOUT || h0 === TIMEOUT) { S.idbStuck = true; console.warn('브라우저 저장소가 3초 넘게 대답 없음'); }
+    const d = d0 === TIMEOUT ? null : d0, h = h0 === TIMEOUT ? null : h0;
     if (h) { S.handle = h; S.fileName = h.name; S.perm = await verifyPerm(h, false); }
     if (d) { S.db = migrate(checkData(d)); index(); const gis = [...new Set(d.students.map((s) => s.gi))].sort((a, b) => a - b); S.st.gi = gis.filter((g) => d.settings.grad[g] && d.settings.grad[g] <= today()).pop() || gis[0]; S.savedAt = d.savedAt; }
   } catch (e) { console.error(e); }

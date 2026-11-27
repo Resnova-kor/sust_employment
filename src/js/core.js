@@ -69,22 +69,27 @@ function queueSave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 
 function plain() { const o = {}; for (const k of Object.keys(S.db)) if (!k.startsWith('_')) o[k] = S.db[k]; return o; }
 async function saveNow() {
   const d = plain(); d.savedAt = nowIso(); S.db.savedAt = d.savedAt; d.app = 'chuieop-stats'; d.format = FORMAT;
-  try { await IDB.set('db', d); } catch (e) { console.error(e); }
+  if (!S.idbStuck) try { if ((await withTimeout(IDB.set('db', d), 3000)) === TIMEOUT) S.idbStuck = true; } catch (e) { console.error(e); }   // 한 번 멈추면 그다음부터는 건너뛰고 파일에 바로 저장
   // 하루 1번 보관본(14일)
-  try {
+  if (!S.idbStuck) try { await withTimeout((async () => {
     const key = 'snap:' + today(); const ks = (await IDB.keys()).filter((k) => String(k).startsWith('snap:')).sort();
     if (!ks.includes(key)) { await IDB.set(key, d); for (const k of ks.slice(0, Math.max(0, ks.length + 1 - 14))) await IDB.del(k); }
-  } catch (e) { console.error(e); }
+  })(), 5000); } catch (e) { console.error(e); }
   if (S.handle && S.perm) {
     try { const w = await S.handle.createWritable(); await w.write(JSON.stringify(d)); await w.close(); S.dirty = false; S.savedAt = d.savedAt; }
     catch (e) { S.perm = false; toast('데이터 파일에 저장하지 못했어요. 관리 › 데이터 파일에서 다시 연결해 주세요'); }
   } else S.savedAt = d.savedAt;
   renderFoot();
 }
+// 크롬이 가끔 대답 없이 멈춘다(저장해 둔 파일 연결의 권한 확인, 브라우저 저장소). 기다리는 시간에 한도를 둬서 빈 화면이 되지 않게 한다 (v4.6)
+const TIMEOUT = Symbol('timeout');
+const withTimeout = (p, ms) => Promise.race([Promise.resolve(p), new Promise((r) => setTimeout(() => r(TIMEOUT), ms))]);
 async function verifyPerm(h, ask) {
   if (!h || !h.queryPermission) return false;
   const o = { mode: 'readwrite' };
-  if ((await h.queryPermission(o)) === 'granted') return true;
+  const q = await withTimeout(h.queryPermission(o), 2000);
+  if (q === TIMEOUT) { S.permStuck = true; console.warn('데이터 파일 권한 확인이 2초 넘게 대답 없음 → 파일을 다시 골라야 함'); return false; }
+  if (q === 'granted') return true;
   if (ask && (await h.requestPermission(o)) === 'granted') return true;
   return false;
 }
@@ -95,19 +100,19 @@ async function openDataFile() {
   try {
     const [h] = await showOpenFilePicker(PICK);
     const d = checkData(JSON.parse(await (await h.getFile()).text()));
-    S.handle = h; S.fileName = h.name; S.perm = await verifyPerm(h, true);
-    await IDB.set('handle', h); loadDb(d, `데이터 파일 열기: ${h.name}`);
+    S.handle = h; S.fileName = h.name; S.permStuck = false; S.perm = await verifyPerm(h, true);
+    await withTimeout(IDB.set('handle', h), 3000); loadDb(d, `데이터 파일 열기: ${h.name}`);
   } catch (e) { if (e.name !== 'AbortError') toast(e.message); }
 }
 async function saveAsFile() {
   if (!FS_OK) { downloadJson(); return; }
   try {
     const h = await showSaveFilePicker(Object.assign({ suggestedName: '취업통계_데이터.json' }, PICK));
-    S.handle = h; S.fileName = h.name; S.perm = true; await IDB.set('handle', h); await saveNow(); toast('데이터 파일에 연결했어요'); render();
+    S.handle = h; S.fileName = h.name; S.perm = true; S.permStuck = false; await withTimeout(IDB.set('handle', h), 3000); await saveNow(); toast('데이터 파일에 연결했어요'); render();
   } catch (e) { if (e.name !== 'AbortError') toast(e.message); }
 }
 async function reconnect() {
-  if (!S.handle) { openDataFile(); return; }
+  if (!S.handle || S.permStuck) { openDataFile(); return; }   // 연결이 멈춘 파일은 다시 고르게
   S.perm = await verifyPerm(S.handle, true); if (!S.perm) { render(); return; }
   let f = null; try { f = checkData(JSON.parse(await (await S.handle.getFile()).text())); } catch (e) { f = null; }
   const ft = (f && f.savedAt) || '', bt = S.db.savedAt || '';

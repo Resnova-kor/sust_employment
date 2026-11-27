@@ -11,7 +11,7 @@ function render() {
       <div class="brand2"><img src="${LOGO_E}" alt="서울도시과학기술고등학교 교표"><div class="bt"><small>서울도시과학기술고</small><b>취업 통계</b></div></div>
       ${(() => { const nb = checkCount(); return MENU.map(([k, l]) => `<button class="m ${S.view === k ? 'on' : ''}" data-act="go" data-v="${k}">${l}${k === 'settings' && nb ? `<span class="badge" title="확인할 것 ${nb}가지">${nb}</span>` : ''}</button>`).join(''); })()}
       <div class="side-foot" id="foot"></div></nav>
-    <main class="view ${!(S.handle && S.perm) ? 'hasbar' : ''}" id="main">${!(S.handle && S.perm) ? `<div class="connbar noprint">${S.handle ? `데이터 파일(${esc(S.fileName)})과 연결이 끊겨 <b>브라우저에만</b> 저장되고 있어요. <button class="btn sm" data-act="reconnect">다시 연결</button>` : `데이터 파일이 연결되지 않아 <b>브라우저에만</b> 저장되고 있어요. <button class="btn sm" data-act="openFile">데이터 파일 열기</button> <button class="btn sm" data-act="saveAs">새 데이터 파일 만들기</button>`}</div>` : ''}${(VIEWS[S.view] || VIEWS.summary)()}</main>`;
+    <main class="view ${!(S.handle && S.perm) || S.idbStuck ? 'hasbar' : ''}" id="main">${!(S.handle && S.perm) ? `<div class="connbar noprint">${S.handle && S.permStuck ? `크롬이 데이터 파일(${esc(S.fileName)}) 연결 확인에 대답하지 않아요. 파일을 다시 골라 주세요(지금은 <b>브라우저에만</b> 저장). <button class="btn sm" data-act="openFile">데이터 파일 열기</button>` : S.handle ? `데이터 파일(${esc(S.fileName)})과 연결이 끊겨 <b>브라우저에만</b> 저장되고 있어요. <button class="btn sm" data-act="reconnect">다시 연결</button>` : `데이터 파일이 연결되지 않아 <b>브라우저에만</b> 저장되고 있어요. <button class="btn sm" data-act="openFile">데이터 파일 열기</button> <button class="btn sm" data-act="saveAs">새 데이터 파일 만들기</button>`}</div>` : ''}${S.idbStuck ? '<div class="connbar noprint">브라우저 저장소가 대답하지 않아 보관본은 쓸 수 없어요(데이터 파일 저장은 돼요). 크롬을 완전히 닫았다가 다시 열어 보세요.</div>' : ''}${(VIEWS[S.view] || VIEWS.summary)()}</main>`;
   morphInto(app, html);
   renderFoot();
   document.querySelectorAll('[data-keep]').forEach((el) => { if (scr[el.dataset.keep] != null) el.scrollTop = scr[el.dataset.keep]; });
@@ -52,6 +52,7 @@ function welcome() {
     <div class="card raised"><h2>데이터 파일 열기</h2>
       <p>'취업통계_데이터.json' 파일을 열면 시작해요. 연결한 파일에는 고칠 때마다 자동으로 저장돼요.</p>
       <button class="btn pri" data-act="openFile">데이터 파일 열기</button>
+      ${S.idbStuck ? '<p class="small warn">브라우저 저장소가 대답하지 않아 지난 자료를 불러오지 못했어요. 데이터 파일을 열면 그대로 쓸 수 있어요.</p>' : ''}
       ${FS_OK ? '' : '<p class="small warn">이 브라우저는 파일 자동 저장을 지원하지 않아요. 크롬이나 엣지에서 열어 주세요(지금은 브라우저에만 저장).</p>'}
     </div></div>`;
 }
