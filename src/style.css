@@ -486,3 +486,4 @@ body{font-variant-numeric:tabular-nums;word-break:keep-all;overflow-wrap:break-w
 h1,h2,h3,h4{margin:0}
 .statw main.sm table.sumt thead th{white-space:normal}   /* 통계 표: 좁은 화면(1280)에서 열 제목이 잘리지 않게 두 줄로 */
 table.t td{vertical-align:middle}   /* 표 칸 글자는 위아래 가운데(입력 칸·버튼이 있는 줄에서도 맞게) */
+hr{margin:var(--sp-3) 0}                       /* 구분선의 브라우저 기본 여백(0.5em) 대신 단계값 */

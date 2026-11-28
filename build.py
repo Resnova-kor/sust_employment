@@ -3,6 +3,7 @@
 사용법 (이 폴더에서):
   python build.py 4.5            → 취업통계_v4.5.html 새로 만들기 (같은 이름 파일이 있으면 멈춤)
   python build.py 4.4 --check    → 만들지 않고, 기존 취업통계_v4.4.html 과 글자 하나까지 같은지 비교
+  python build.py 시험 --out tests/out/app.html → 검사용으로 정한 곳에 만들기(덮어씀, 버전 파일 아님)
 
 파이썬 기본 기능만 씁니다(따로 설치할 것 없음).
 """
@@ -53,7 +54,8 @@ def build(ver):
 
 
 def main(argv):
-    args = [a for a in argv if not a.startswith('--')]
+    out_arg = argv[argv.index('--out') + 1] if '--out' in argv and argv.index('--out') + 1 < len(argv) else None
+    args = [a for a in argv if not a.startswith('--') and a != out_arg]
     if len(args) != 1:
         print(__doc__)
         return 2
@@ -76,6 +78,12 @@ def main(argv):
         print(f'다름 ✘  {line}번째 줄 근처부터 다릅니다 (기존 {len(old):,} / 빌드 {len(data):,} 바이트)')
         return 1
 
+    if out_arg:   # 검사용: 정한 곳에 덮어쓰기
+        os.makedirs(os.path.dirname(os.path.abspath(out_arg)), exist_ok=True)
+        with open(out_arg, 'wb') as f:
+            f.write(data)
+        print(f'만듦(검사용): {out_arg} ({len(data):,} 바이트)')
+        return 0
     if os.path.exists(out):
         print(f'이미 있는 파일이라 멈춥니다: {os.path.basename(out)}  (이전 버전은 지우지 않는 규칙)')
         return 1
